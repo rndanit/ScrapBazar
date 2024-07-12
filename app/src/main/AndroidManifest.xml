@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.ScrapBazar"
+        tools:targetApi="31">
+        <activity
+            android:name=".Activity.ManageGoogleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ManageProfileDataActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ManageAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.NeedHelpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ReschedulePickupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.CancelInqueryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.PickupStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ThankyouActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.PickupNotesActivity"
+            android:exported="false" />
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCSAeVUAylX67wvQN4Zk2n7SA9frE-UQe8" />
+
+        <activity
+            android:name=".Activity.GoogleMapsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_google_maps" />
+        <activity
+            android:name=".Activity.SelectPickupAddressActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.SelectApproximateActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ContainMainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AppBarActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.SocietyCollabrationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MyNotificationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MyPickupResquestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.OtpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

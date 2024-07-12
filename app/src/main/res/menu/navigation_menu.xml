@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/home"
+        android:title="Home" />
+    <item
+        android:id="@+id/my_request"
+        android:icon="@drawable/baseline_account_balance_wallet_24"
+        android:title="My Request" />
+    <group>
+    <item
+        android:id="@+id/notification"
+        android:icon="@drawable/bell"
+        android:title="Notification" />
+
+    <item
+        android:id="@+id/society"
+        android:icon="@drawable/society"
+        android:title="Society Collabration" />
+
+    <item
+        android:id="@+id/need_help"
+        android:icon="@drawable/help"
+        android:title="Need Help?" />
+
+    <item
+        android:id="@+id/share"
+        android:icon="@drawable/share"
+        android:title="Share Us" />
+
+    </group>
+
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/right"
+        android:title="Log Out" />
+
+</menu>

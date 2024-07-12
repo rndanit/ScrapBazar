@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "310129867631",
+    "project_id": "scrapbazar-ec3c8",
+    "storage_bucket": "scrapbazar-ec3c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310129867631:android:73519db92482c62a2d069a",
+        "android_client_info": {
+          "package_name": "com.example.scrapbazar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAlwaHbDP5Yke3Y05t41bSCnG-TJ4TYhco"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

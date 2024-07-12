@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="dropdown_items">
+        <item>Found a better price elsewhere</item>
+        <item>Item no longer needed</item>
+        <item>Shipping took too long</item>
+        <item>Ordered by mistake</item>
+        <item>Change of mind</item>
+    </string-array>
+</resources>
