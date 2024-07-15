@@ -179,18 +179,6 @@ class PickupStatusActivity : AppCompatActivity() {
 
         }
 
-        /*
-        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-        val rescheduledate=sharedPreference.getString("rescheduleDate",null)
-        if(rescheduledate!=null){
-            date.text=rescheduledate
-            rescheduleButton.visibility=View.GONE
-            // Increase the width and height of the button by 50%
-
-            drawableFirst.setImageResource(R.drawable.full_green_right)
-        }
-
-         */
 
 
     }
