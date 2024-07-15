@@ -54,11 +54,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 Toast.makeText(this, "Please fill in a valid 10-digit number", Toast.LENGTH_SHORT).show()
             }
-            /*
-            getData()
-            Toast.makeText(this,"Please fill the Number",Toast.LENGTH_SHORT).show()
 
-             */
         }
 
         binding.skipButton.setOnClickListener {
@@ -85,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.makeText(this@LoginActivity, "${it.message}", Toast.LENGTH_SHORT).show()
                         val editor = sharedPreference.edit()
                         editor.putInt("otp_id", it.id)
+                        editor.putString("mobile_number", MobileNumber)  // Store the mobile number
                         editor.apply()
 
                         val intent = Intent(this@LoginActivity, OtpActivity::class.java)

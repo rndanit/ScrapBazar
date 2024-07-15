@@ -1,23 +1,25 @@
 package com.example.scrapbazar.Activity
 
 import android.annotation.SuppressLint
-import android.content.ContentResolver
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.Intent
+import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
-import androidx.appcompat.widget.Toolbar
 import com.example.scrapbazar.Api.RetrofitInstance
 import com.example.scrapbazar.DataModel.UpdateProfileResponse
 import com.example.scrapbazar.R
-import com.example.scrapbazar.Util.FileUtil
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
@@ -26,154 +28,157 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
+import java.io.IOException
 
 class ManageProfileDataActivity : AppCompatActivity() {
 
-    private var selectedImageUri: Uri? = null
     private lateinit var profileImageView: ImageView
     private lateinit var userName: EditText
     private lateinit var email: EditText
     private lateinit var saveButton: Button
+    private val REQUEST_IMAGE_PICK = 1
+    private var selectedImageUri: Uri? = null
+    private lateinit var mProgress: ProgressDialog
 
-    @SuppressLint("MissingInflatedId")
     @RequiresApi(Build.VERSION_CODES.M)
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manage_profile_data)
 
-        // Find the views
-        userName = findViewById(R.id.userName)
-        email = findViewById(R.id.email)
-        profileImageView = findViewById(R.id.profileImageView)
-        saveButton = findViewById(R.id.saveButton)
+        //Find the Id of a Variables.
+        profileImageView=findViewById(R.id.profileImageView)
+        saveButton=findViewById(R.id.saveButton)
+        userName=findViewById(R.id.userName)
+        email=findViewById(R.id.email)
+        val btnPickImage = findViewById<FloatingActionButton>(R.id.cameraButton)
 
-        // Get the stored ID
-        val sharedPreference = getSharedPreferences("MyPrefs", MODE_PRIVATE)
-        val otpId = sharedPreference.getInt("otp_id", -1)
-
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
+        //Find the Id of a Toolbar.
+        val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         // Customize the toolbar
-        supportActionBar?.title = "Manage Profile"
-        toolbar.setTitleTextColor(getColor(R.color.white))
+        supportActionBar?.title = "Manage Profile" // Set the toolbar title
+        toolbar.setTitleTextColor(getColor(R.color.white)) // Set the title color
+
+        // Enable back button
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
+
+        // Set the toolbar background color (optional)
         toolbar.setBackgroundColor(getColor(R.color.colorPrimary))
 
-        val cameraButton: FloatingActionButton = findViewById(R.id.cameraButton)
-        cameraButton.setOnClickListener {
-            openGallery()
+
+        //Functionality of a ProgressBar.
+        mProgress = ProgressDialog(this).apply {
+            setTitle("Loading Data....")
+            setMessage("Please wait...")
+            setCancelable(false)
+            setIndeterminate(true)
         }
 
+        //Camera Button setOnClickListener to open the Image Chooser.
+        btnPickImage.setOnClickListener {
+            openImagePicker()
+        }
+
+        //Save Button setOnClickListener to Upload the Data to the server.
         saveButton.setOnClickListener {
-            if (otpId != -1) {
-                postUserData(otpId)
+            selectedImageUri?.let {
+                mProgress.show()
+                uploadImage(selectedImageUri!!)
                 finish()
-            } else {
-                Toast.makeText(this, "Invalid OTP ID", Toast.LENGTH_SHORT).show()
+            } ?: run {
+                Toast.makeText(this, "Please pick an image first", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun postUserData(otpId: Int) {
-        val userNameValue = userName.text.toString().trim()
-        val emailValue = email.text.toString().trim()
+    //openImagePicker function.
+    private fun openImagePicker() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_IMAGE_PICK)
+    }
 
-        if (userNameValue.isEmpty() || emailValue.isEmpty()) {
-            Toast.makeText(this, "Please enter all the details", Toast.LENGTH_SHORT).show()
-            return
+    // onActivityResult Function.
+    override fun onActivityResult(requestCode: Int, resultCode: Int, @Nullable data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_PICK && resultCode == RESULT_OK && data != null) {
+            selectedImageUri = data.data
+            profileImageView.setImageURI(selectedImageUri)
         }
+    }
+
+    //Upload Image Function.
+    private fun uploadImage(imageUri: Uri) {
+
+        // Retrieve the ID from SharedPreferences
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val otpId = sharedPreference.getInt("otp_id", -1)
+
+        val name = userName.text.toString().trim()
+        val email = email.text.toString().trim()
+        val id = otpId
 
 
-        // Prepare the form data
-        val idPart = RequestBody.create("text/plain".toMediaTypeOrNull(), otpId.toString())
-        val userNamePart = RequestBody.create("text/plain".toMediaTypeOrNull(), userNameValue)
-        val emailPart = RequestBody.create("text/plain".toMediaTypeOrNull(), emailValue)
-//
-//        val imagePart: MultipartBody.Part? = selectedImageUri?.let { uri ->
-//            val file = createFileFromUri(uri)
-//            val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), file)
-//            MultipartBody.Part.createFormData("image", file.name, requestFile)
-//        }
+        val file = File( getRealPathFromURI(imageUri))
+        val requestFile = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), file)
+        val body = MultipartBody.Part.createFormData("image", file.name, requestFile)
 
-        //Convert Uri to File using FileUtil
-        val imageFile = FileUtil.getFileFromUri(this, selectedImageUri!!)
-        if (imageFile == null) {
-            Toast.makeText(this, "Failed to get image file", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val requestFile = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
-        val imagePart =
-            MultipartBody.Part.createFormData("image", imageFile.name, requestFile)
+        val requestId = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), id.toString())
+        val requestName = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), name)
+        val requestEmail = RequestBody.create("multipart/form-data".toMediaTypeOrNull(), email)
 
 
-        // Logging the request parts for debugging
-        Log.d("Request Data", "ID: $otpId, UserName: $userNameValue, Email: $emailValue, Image: ${imagePart?.body?.contentType()}")
-
-        // Make the API call
-        RetrofitInstance.apiInterface.submitForm(idPart, userNamePart, emailPart, imagePart).enqueue(object :
-            Callback<UpdateProfileResponse> {
+        RetrofitInstance.apiInterface.submitForm(requestId, requestName, requestEmail, body).enqueue(object : Callback<UpdateProfileResponse> {
             override fun onResponse(call: Call<UpdateProfileResponse>, response: Response<UpdateProfileResponse>) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    Log.d("Update Profile Response", "onResponse: $responseBody")
-                    Toast.makeText(this@ManageProfileDataActivity, responseBody?.message ?: "Success", Toast.LENGTH_SHORT).show()
+                    val contentType = response.headers()["Content-Type"]
+                    contentType?.let {
+                        Log.e("API Response", "Content-Type: $it")
+                    } ?: run {
+                        Log.e("API Response", "Content-Type header is not present.")
+                    }
+
+                    val updateResponse = response.body()
+                    val message = updateResponse?.message
+                    mProgress.dismiss()
+                    Toast.makeText(this@ManageProfileDataActivity, message, Toast.LENGTH_SHORT).show()
                 } else {
-                    val errorBody = response.errorBody()?.string()
-                    Toast.makeText(this@ManageProfileDataActivity, "Error: ${response.code()}", Toast.LENGTH_SHORT).show()
-                    Log.d("Update Data", "onResponse: ${response.code()} - $errorBody")
+                    try {
+                        val errorBody = response.errorBody()?.string()
+                        Log.e("path", "Error response: $errorBody")
+                        Toast.makeText(this@ManageProfileDataActivity, "not success $errorBody", Toast.LENGTH_SHORT).show()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
                 }
             }
 
             override fun onFailure(call: Call<UpdateProfileResponse>, t: Throwable) {
-                Toast.makeText(this@ManageProfileDataActivity, t.message, Toast.LENGTH_SHORT).show()
-                Log.d("Update Data", "onFailure: ${t.message}")
+                mProgress.dismiss()
+                Toast.makeText(this@ManageProfileDataActivity, "Code: ", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@ManageProfileDataActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("path", t.localizedMessage ?: "")
             }
         })
     }
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            selectedImageUri = it
-            profileImageView.setImageURI(it)
-        }
+    //getRealPathFromURI Function.
+    private fun getRealPathFromURI(contentUri: Uri): String {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor: Cursor = contentResolver.query(contentUri, projection, null, null, null) ?: return ""
+        val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        val filePath = cursor.getString(columnIndex)
+        cursor.close()
+        return filePath
     }
 
-    private fun openGallery() {
-        pickImage.launch("image/*")
-    }
-
-    private fun createFileFromUri(uri: Uri): File {
-        val inputStream: InputStream? = contentResolver.openInputStream(uri)
-        val file = File(cacheDir, contentResolver.getFileName(uri))
-        inputStream.use { input ->
-            FileOutputStream(file).use { output ->
-                input?.copyTo(output)
-            }
-        }
-        return file
-    }
-
-    fun ContentResolver.getFileName(uri: Uri): String {
-        var name = ""
-        val cursor = this.query(uri, null, null, null, null)
-        cursor?.use {
-            if (it.moveToFirst()) {
-                val columnIndex = it.getColumnIndex("_display_name")
-                if (columnIndex != -1) {
-                    name = it.getString(columnIndex)
-                }
-            }
-        }
-        return name
-    }
-
+    //OnBackPressed Function.
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }
 }
+

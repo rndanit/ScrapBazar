@@ -82,7 +82,7 @@ interface ApiInterface {
     @POST("updateprofile")
        fun submitForm(
         @Part("id") id: RequestBody,
-        @Part("userName") userName: RequestBody,
+        @Part("first_name") userName: RequestBody,
         @Part("email") email: RequestBody,
         @Part image: MultipartBody.Part?
     ): Call<UpdateProfileResponse>

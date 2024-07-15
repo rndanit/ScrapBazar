@@ -43,6 +43,7 @@ class ProfileActivity : AppCompatActivity() {
         profileNumber = findViewById(R.id.profileNumber)
         profileUserdata = findViewById(R.id.profileUserName)
 
+        //Find the Id of a Toolbar.
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
@@ -75,6 +76,7 @@ class ProfileActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        //LogOut Functionality.
         logoutAccount = findViewById(R.id.logoutAccount)
         logoutAccount.setOnClickListener {
             // Clear SharedPreferences data
@@ -91,10 +93,16 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    //getProfileData Function.
     private fun getProfileData() {
         // Get the stored ID
         val sharedPreference = getSharedPreferences("MyPrefs", MODE_PRIVATE)
         val otpId = sharedPreference.getInt("otp_id", -1)
+
+        val mobileNumber = sharedPreference.getString("mobile_number", "")
+
+        // Set the mobile number to profileNumber TextView
+        profileNumber.text = mobileNumber
 
         RetrofitInstance.apiInterface.getProfileData(otpId).enqueue(object : Callback<GetProfileDataResponse?> {
             override fun onResponse(
@@ -118,6 +126,13 @@ class ProfileActivity : AppCompatActivity() {
                 Log.d("Update Data", "onFailure: ${t.message}")
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Get data function call
+        getProfileData()
     }
 
     override fun onSupportNavigateUp(): Boolean {
