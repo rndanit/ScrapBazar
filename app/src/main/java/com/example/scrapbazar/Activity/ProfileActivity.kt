@@ -11,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.scrapbazar.Api.RetrofitInstance
 import com.example.scrapbazar.DataModel.GetProfileDataResponse
 import com.example.scrapbazar.DataModel.UserRequest
@@ -35,6 +36,9 @@ class ProfileActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Force light mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         setContentView(R.layout.activity_profile)
 
         // Find the Value of Variables

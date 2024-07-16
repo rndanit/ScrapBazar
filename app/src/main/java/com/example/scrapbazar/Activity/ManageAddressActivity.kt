@@ -25,7 +25,6 @@ import com.example.scrapbazar.DataModel.UserAddressResponseSubListItem
 import com.example.scrapbazar.DataModel.UserRequest
 import com.example.scrapbazar.DataModel.UserResponseSubListItem
 import com.example.scrapbazar.R
-import com.example.scrapbazar.databinding.ActivitySelectPickupAddressBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

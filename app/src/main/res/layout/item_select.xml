@@ -9,17 +9,17 @@
         android:id="@+id/selectCardview"
         android:layout_width="190dp"
         android:layout_height="105dp"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="42dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="42dp"
         android:layout_marginBottom="8dp"
-        app:strokeWidth="2dp"
         app:cardCornerRadius="10dp"
         app:cardElevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="2dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/maincontainer"
@@ -43,12 +43,12 @@
                 android:id="@+id/SelectRadioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:checked="false"
-                android:clickable="false"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="36dp"
                 android:layout_marginBottom="36dp"
+                android:checked="false"
+                android:clickable="false"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

@@ -6,6 +6,9 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,11 +26,18 @@ class MyPickupResquestActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var requestAdapter: RequestAdapter
+    private lateinit var progessBar: ProgressBar
+    private lateinit var progessBarTextView:TextView
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_pickup_resquest)
+
+        //Find the Id of a Variables.
+        progessBar=findViewById(R.id.progressBar)
+        progessBarTextView=findViewById(R.id.progressTextview)
+
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -37,6 +47,10 @@ class MyPickupResquestActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setDisplayShowHomeEnabled(true)
         toolbar.setBackgroundColor(getColor(R.color.colorPrimary))
+
+        // Show progress bar and text
+        progessBarTextView.visibility = View.VISIBLE
+        progessBar.visibility = View.VISIBLE
 
         recyclerView = findViewById(R.id.requestRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -78,6 +92,10 @@ class MyPickupResquestActivity : AppCompatActivity() {
                 }
                 recyclerView.adapter = requestAdapter
 
+                //  Not Show progress bar and text
+                progessBarTextView.visibility = View.GONE
+                progessBar.visibility = View.GONE
+
                 Toast.makeText(this@MyPickupResquestActivity, "RequestData:${requestData}", Toast.LENGTH_SHORT).show()
                 Log.d("DataFetchApi", "Request Data:${requestData}")
             }
@@ -87,6 +105,9 @@ class MyPickupResquestActivity : AppCompatActivity() {
                 t: Throwable
             ) {
                 // Handle failure
+                //  Not Show progress bar and text
+                progessBarTextView.visibility = View.GONE
+                progessBar.visibility = View.GONE
             }
         })
     }

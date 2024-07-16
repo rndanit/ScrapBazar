@@ -27,38 +27,28 @@ class MainActivity : AppCompatActivity() {
         // Initialize SharedPreferences
         sharedPreferences = getSharedPreferences("com.example.scrapbazar", MODE_PRIVATE)
 
-        // Check if intro has been shown before
-        if (hasIntroBeenShown()) {
-            // If intro has been shown, go to LoginActivity directly
+        // Set content view
+        setContentView(binding.root)
+        viewPager = findViewById(R.id.viewPager)
+
+        val images = listOf(
+            R.drawable.hot_delivery,
+            R.drawable.favourite_food,
+            R.drawable.p
+        )
+
+        val adapter = ImageSliderAdapter(this, images)
+        viewPager.adapter = adapter
+
+        binding.nextButton.setOnClickListener {
             navigateToLogin()
-        } else {
-            // If intro has not been shown, show intro and mark it as shown
-            setContentView(binding.root)
-            viewPager = findViewById(R.id.viewPager)
-
-            val images = listOf(
-                R.drawable.hot_delivery,
-                R.drawable.favourite_food,
-                R.drawable.p
-            )
-
-            val adapter = ImageSliderAdapter(this, images)
-            viewPager.adapter = adapter
-
-            binding.nextButton.setOnClickListener {
-                navigateToLogin()
-            }
-            binding.skipText.setOnClickListener {
-                navigateToLogin()
-            }
-
-            // Mark intro as shown
-            markIntroAsShown()
         }
-    }
+        binding.skipText.setOnClickListener {
+            navigateToLogin()
+        }
 
-    private fun hasIntroBeenShown(): Boolean {
-        return sharedPreferences.getBoolean("intro_shown", false)
+        // Mark intro as shown
+        markIntroAsShown()
     }
 
     private fun markIntroAsShown() {

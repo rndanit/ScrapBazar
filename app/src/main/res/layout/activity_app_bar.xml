@@ -24,7 +24,7 @@
                 <ImageView
                     android:id="@+id/notificationbell"
                     android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:clickable="true"
                     android:background="@drawable/bell_simple"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -36,7 +36,7 @@
                     android:background="@drawable/whatsapp"
                     android:clickable="true"
                     android:layout_width="40dp"
-                    android:layout_height="30dp"
+                    android:layout_height="40dp"
                     android:layout_marginEnd="8dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

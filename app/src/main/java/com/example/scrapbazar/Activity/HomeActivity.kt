@@ -6,14 +6,17 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.SearchView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
@@ -43,16 +46,25 @@ class HomeActivity : AppCompatActivity() {
     lateinit var whatsappIcon: ImageView
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ProductAdapter
+    private lateinit var progessBar: ProgressBar
+    private lateinit var progessBarTextView:TextView
     private lateinit var selectedProductNames: ArrayList<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Force light mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         setContentView(R.layout.activity_home)
 
 
         val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
 
+        //Find the value
+
+        progessBar=findViewById(R.id.progressBar)
+        progessBarTextView=findViewById(R.id.progressTextview)
 
 
         //searchView=findViewById(R.id.searchView)
@@ -88,14 +100,24 @@ class HomeActivity : AppCompatActivity() {
         continueButton.isEnabled = false
         //continueButton.setBackgroundColor(Color.GRAY)
 
+        // Show progress bar and text
+        progessBarTextView.visibility = View.VISIBLE
+        progessBar.visibility = View.VISIBLE
+
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
 
         getData()
 
         notificationBell.setOnClickListener {
-            val intent = Intent(this@HomeActivity, MyNotificationActivity::class.java)
-            startActivity(intent)
+            val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+            if (isLoggedIn) {
+                val intent = Intent(this@HomeActivity, MyNotificationActivity::class.java)
+                startActivity(intent)
+            } else {
+                redirectToLogin()
+            }
         }
         whatsappIcon.setOnClickListener {
             openWhatsApp()
@@ -110,8 +132,6 @@ class HomeActivity : AppCompatActivity() {
         )
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-
-        showCustomAlertDialog(this)
 
 
         //Navigation Drawer Functionality
@@ -151,6 +171,11 @@ class HomeActivity : AppCompatActivity() {
                     shareContent()
                     true
                 }
+                R.id.logout->{
+                    Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show()
+                    logout()
+                    true
+                }
 
                 else -> false
             }
@@ -170,7 +195,24 @@ class HomeActivity : AppCompatActivity() {
                 redirectToLogin()
             }
         }
+        //Call the Alert Box Function.
+        showCustomAlertDialog(this)
     }
+
+    private fun logout() {
+
+            // Clear SharedPreferences data
+            val sharedPreference = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+            val editor = sharedPreference.edit()
+            editor.clear()
+            editor.apply()
+
+            // Redirect to LoginActivity
+            val intent = Intent(this@HomeActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
 
     private fun redirectToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
@@ -288,6 +330,10 @@ class HomeActivity : AppCompatActivity() {
                             this@HomeActivity
                         ) { updateContinueButton() }
                         recyclerView.adapter = adapter
+
+                        //  Not Show progress bar and text
+                        progessBarTextView.visibility = View.GONE
+                        progessBar.visibility = View.GONE
                     } else {
                         Toast.makeText(
                             this@HomeActivity,
@@ -301,6 +347,10 @@ class HomeActivity : AppCompatActivity() {
                     Log.d("Error", "onFailure:${t.localizedMessage} ")
                     Toast.makeText(this@HomeActivity, "${t.localizedMessage}", Toast.LENGTH_SHORT)
                         .show()
+
+                    //  Not Show progress bar and text
+                    progessBarTextView.visibility = View.GONE
+                    progessBar.visibility = View.GONE
                 }
             })
     }

@@ -5,7 +5,10 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -47,6 +50,8 @@ class SelectApproximateActivity : AppCompatActivity() {
         button = findViewById(R.id.continue_Btn)
 
         button.isEnabled = false
+
+
         recyclerView = findViewById(R.id.recyclerView_second)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
         getData()

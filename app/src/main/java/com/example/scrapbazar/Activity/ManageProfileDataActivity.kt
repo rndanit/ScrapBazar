@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.scrapbazar.Api.RetrofitInstance
 import com.example.scrapbazar.DataModel.UpdateProfileResponse
 import com.example.scrapbazar.R
@@ -44,6 +45,10 @@ class ManageProfileDataActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Force light mode
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         setContentView(R.layout.activity_manage_profile_data)
 
         //Find the Id of a Variables.
