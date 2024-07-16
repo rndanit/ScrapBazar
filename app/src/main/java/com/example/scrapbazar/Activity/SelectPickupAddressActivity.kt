@@ -59,7 +59,7 @@ class SelectPickupAddressActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         // Customize the toolbar
-        supportActionBar?.title = "Select Approximate Weight" // Set the toolbar title
+        supportActionBar?.title = "Select pickup address" // Set the toolbar title
         toolbar.setTitleTextColor(getColor(R.color.white)) // Set the title color
 
         // Enable back button

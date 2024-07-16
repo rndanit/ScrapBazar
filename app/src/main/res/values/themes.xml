@@ -1,10 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.ScrapBazar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Base.Theme.ScrapBazar" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your light theme here. -->
-         <item name="colorPrimary">@color/blue</item>
-        <item name="colorPrimaryVariant">@color/blue</item>
-        <item name="android:statusBarColor">@color/blue</item>
+         <item name="colorPrimary">@color/gray</item>
+        <item name="colorPrimaryVariant">@color/gray</item>
+        <item name="android:statusBarColor">@color/gray</item>
     </style>
 
     <style name="Theme.ScrapBazar" parent="Base.Theme.ScrapBazar" />

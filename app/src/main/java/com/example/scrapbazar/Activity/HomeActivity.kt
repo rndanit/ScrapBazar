@@ -49,6 +49,12 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+
+
+
         //searchView=findViewById(R.id.searchView)
 
         adapter = ProductAdapter(emptyList(), this) { updateContinueButton() }
@@ -56,13 +62,21 @@ class HomeActivity : AppCompatActivity() {
         mobileNumber = intent.getStringExtra("mobile_number").toString()
 
         continueButton = findViewById(R.id.continue_Btn)
+
         continueButton.setOnClickListener {
-            selectedProductNames = adapter.getSelectedProductsName()
-            val intent = Intent(this@HomeActivity, SelectApproximateActivity::class.java)
-            intent.putStringArrayListExtra("selectedProductNames", selectedProductNames)
-            intent.putExtra("mobile_number", mobileNumber)
-            startActivity(intent)
+            if (isLoggedIn) {
+
+                selectedProductNames = adapter.getSelectedProductsName()
+                val intent = Intent(this@HomeActivity, SelectApproximateActivity::class.java)
+                intent.putStringArrayListExtra("selectedProductNames", selectedProductNames)
+                intent.putExtra("mobile_number", mobileNumber)
+                startActivity(intent)
+
+            } else {
+                redirectToLogin()
+            }
         }
+
 
         //find the value of a variables.
         notificationBell = findViewById(R.id.notificationbell)
@@ -105,29 +119,33 @@ class HomeActivity : AppCompatActivity() {
             when (menuItem.itemId) {
                 R.id.home -> {
                     Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show()
-                    Home()
                     true
                 }
+
                 R.id.my_request -> {
                     Toast.makeText(this, "My Request", Toast.LENGTH_SHORT).show()
                     myrequest()
                     true
                 }
+
                 R.id.notification -> {
                     Toast.makeText(this, "Notification", Toast.LENGTH_SHORT).show()
                     notification()
                     true
                 }
+
                 R.id.society -> {
                     Toast.makeText(this, "Society", Toast.LENGTH_SHORT).show()
                     society()
                     true
                 }
+
                 R.id.need_help -> {
                     Toast.makeText(this, "Need Help", Toast.LENGTH_SHORT).show()
                     help()
                     true
                 }
+
                 R.id.share -> {
                     Toast.makeText(this, "Share", Toast.LENGTH_SHORT).show()
                     shareContent()
@@ -143,32 +161,40 @@ class HomeActivity : AppCompatActivity() {
         val headerView = navigationView.getHeaderView(0)
         val viewProfile = headerView.findViewById<TextView>(R.id.ViewProfile)
         viewProfile.setOnClickListener {
-            val intent = Intent(this@HomeActivity, ProfileActivity::class.java)
-            startActivity(intent)
+            val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+            if (isLoggedIn) {
+                val intent = Intent(this@HomeActivity, ProfileActivity::class.java)
+                startActivity(intent)
+            } else {
+                redirectToLogin()
+            }
         }
     }
 
-    private fun Home() {
-        val intent = Intent(this@HomeActivity, HomeActivity::class.java)
+    private fun redirectToLogin() {
+        val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
 
+
+
     private fun help() {
-            val intent = Intent(this@HomeActivity, NeedHelpActivity::class.java)
-            startActivity(intent)
+        val intent = Intent(this@HomeActivity, NeedHelpActivity::class.java)
+        startActivity(intent)
     }
 
     private fun updateContinueButton() {
         val selectedCount = adapter.getSelectedProductsName().size
         if (selectedCount > 0) {
             continueButton.isEnabled = true
-            continueButton.backgroundTintList=ContextCompat.getColorStateList(this, R.color.green)
+            continueButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.green)
             continueButton.setBackgroundResource(R.drawable.proceedbutonshape)
-           // binding.continueAddressBtn.backgroundTintList = ContextCompat.getColorStateList(applicationContext, R.color.green)
+            // binding.continueAddressBtn.backgroundTintList = ContextCompat.getColorStateList(applicationContext, R.color.green)
         } else {
             continueButton.isEnabled = false
-            continueButton.backgroundTintList=ContextCompat.getColorStateList(this,R.color.gray)
+            continueButton.backgroundTintList = ContextCompat.getColorStateList(this, R.color.gray)
             continueButton.setBackgroundResource(R.drawable.proceedbutonshape)
         }
     }
@@ -182,18 +208,36 @@ class HomeActivity : AppCompatActivity() {
 
 
     private fun society() {
-        val intent = Intent(this@HomeActivity, SocietyCollabrationActivity::class.java)
-        startActivity(intent)
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            val intent = Intent(this@HomeActivity, SocietyCollabrationActivity::class.java)
+            startActivity(intent)
+        } else {
+            redirectToLogin()
+        }
     }
 
     private fun notification() {
-        val intent = Intent(this@HomeActivity, MyNotificationActivity::class.java)
-        startActivity(intent)
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            val intent = Intent(this@HomeActivity, MyNotificationActivity::class.java)
+            startActivity(intent)
+        } else {
+            redirectToLogin()
+        }
     }
 
     private fun myrequest() {
-        val intent = Intent(this@HomeActivity, MyPickupResquestActivity::class.java)
-        startActivity(intent)
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+        if (isLoggedIn) {
+            val intent = Intent(this@HomeActivity, MyPickupResquestActivity::class.java)
+            startActivity(intent)
+        } else {
+            redirectToLogin()
+        }
     }
 
     //Share the the Content Functionality
@@ -239,16 +283,24 @@ class HomeActivity : AppCompatActivity() {
                 ) {
                     if (response.isSuccessful) {
                         val productResponse: List<ProductDataClass> = response.body()!!.get(0)
-                        adapter = ProductAdapter(productResponse, this@HomeActivity) { updateContinueButton() }
+                        adapter = ProductAdapter(
+                            productResponse,
+                            this@HomeActivity
+                        ) { updateContinueButton() }
                         recyclerView.adapter = adapter
                     } else {
-                        Toast.makeText(this@HomeActivity, "Not Success: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@HomeActivity,
+                            "Not Success: ${response.code()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<List<List<ProductDataClass>>?>, t: Throwable) {
                     Log.d("Error", "onFailure:${t.localizedMessage} ")
-                    Toast.makeText(this@HomeActivity, "${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@HomeActivity, "${t.localizedMessage}", Toast.LENGTH_SHORT)
+                        .show()
                 }
             })
     }

@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -32,6 +34,8 @@ class ManageAddressActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var UserAdapter: UserAddressAdapter
     private lateinit var manageAddress:ImageButton
+    private lateinit var progessBar: ProgressBar
+    private lateinit var progessBarTextView:TextView
     private var addressList: MutableList<UserAddressResponseSubListItem> = mutableListOf()
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -41,6 +45,9 @@ class ManageAddressActivity : AppCompatActivity() {
 
         //Find the value
         manageAddress=findViewById(R.id.ManageAddressContainer)
+
+        progessBar=findViewById(R.id.progressBar)
+        progessBarTextView=findViewById(R.id.progressTextview)
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -55,6 +62,11 @@ class ManageAddressActivity : AppCompatActivity() {
 
         // Set the toolbar background color (optional)
         toolbar.setBackgroundColor(getColor(R.color.colorPrimary))
+
+        // Show progress bar and text
+        progessBarTextView.visibility = View.VISIBLE
+        progessBar.visibility = View.VISIBLE
+
 
         recyclerView = findViewById(R.id.userAddressRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -89,6 +101,10 @@ class ManageAddressActivity : AppCompatActivity() {
                     deleteAddress(addressId)
                 }
                 recyclerView.adapter = UserAdapter
+
+                //  Not Show progress bar and text
+                progessBarTextView.visibility = View.GONE
+                progessBar.visibility = View.GONE
             }
 
             override fun onFailure(
@@ -96,6 +112,10 @@ class ManageAddressActivity : AppCompatActivity() {
                 t: Throwable
             ) {
                 Log.e("Fetch Address Response", "Failure: ${t.message}")
+
+                //  Not Show progress bar and text
+                progessBarTextView.visibility = View.GONE
+                progessBar.visibility = View.GONE
             }
         })
     }

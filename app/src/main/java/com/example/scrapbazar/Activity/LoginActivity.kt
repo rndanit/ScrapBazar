@@ -22,10 +22,23 @@ import retrofit2.Response
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val isLoggedIn = sharedPreference.getBoolean("isLoggedIn", false)
+
+        // Redirect to HomeActivity if already logged in
+        if (isLoggedIn) {
+            val intent = Intent(this@LoginActivity, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
         binding.mobilenumber.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // Not needed
@@ -47,29 +60,27 @@ class LoginActivity : AppCompatActivity() {
         })
 
         binding.sendOtpButton.setOnClickListener {
-
             val MobileNumber = binding.mobilenumber.text.toString()
             if (MobileNumber.length == 10) {
                 getData(MobileNumber)
             } else {
                 Toast.makeText(this, "Please fill in a valid 10-digit number", Toast.LENGTH_SHORT).show()
             }
-
         }
 
         binding.skipButton.setOnClickListener {
+            val editor = sharedPreference.edit()
+            editor.putBoolean("isLoggedIn", false)  // User skipped login
+            editor.apply()
 
             val intent = Intent(this@LoginActivity, HomeActivity::class.java)
             startActivity(intent)
-
+            finish()
         }
     }
 
     private fun getData(MobileNumber: String) {
-
-
-        val request = OtpRequest(mobile =MobileNumber)
-
+        val request = OtpRequest(mobile = MobileNumber)
         val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
         RetrofitInstance.apiInterface.sendOtp(request).enqueue(object : Callback<OtpResponse> {
@@ -82,6 +93,7 @@ class LoginActivity : AppCompatActivity() {
                         val editor = sharedPreference.edit()
                         editor.putInt("otp_id", it.id)
                         editor.putString("mobile_number", MobileNumber)  // Store the mobile number
+                        editor.putBoolean("isLoggedIn", true)  // User logged in
                         editor.apply()
 
                         val intent = Intent(this@LoginActivity, OtpActivity::class.java)
@@ -98,9 +110,4 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
-
 }
-
-
-
-
