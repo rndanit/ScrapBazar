@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.scrapbazar.Adapter.RequestAdapter
 import com.example.scrapbazar.Api.RetrofitInstance
 import com.example.scrapbazar.DataModel.RequestQueryRequest
@@ -28,6 +29,7 @@ class MyPickupResquestActivity : AppCompatActivity() {
     private lateinit var requestAdapter: RequestAdapter
     private lateinit var progessBar: ProgressBar
     private lateinit var progessBarTextView:TextView
+    private lateinit var swipeRefreshLayout:SwipeRefreshLayout
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,7 @@ class MyPickupResquestActivity : AppCompatActivity() {
         //Find the Id of a Variables.
         progessBar=findViewById(R.id.progressBar)
         progessBarTextView=findViewById(R.id.progressTextview)
+        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
 
 
         val toolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.toolbar)
@@ -54,6 +57,20 @@ class MyPickupResquestActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.requestRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        swipeRefreshLayout.setOnRefreshListener {
+
+            val sharedPreference = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val otpId = sharedPreference.getInt("otp_id", -1)
+
+            if (otpId != -1) {
+                fetchRequestData(otpId)
+            } else {
+                Toast.makeText(this, "Failed to retrieve OTP ID", Toast.LENGTH_SHORT).show()
+                swipeRefreshLayout.isRefreshing = false
+            }
+
+        }
     }
 
     override fun onResume() {
@@ -95,6 +112,7 @@ class MyPickupResquestActivity : AppCompatActivity() {
                 //  Not Show progress bar and text
                 progessBarTextView.visibility = View.GONE
                 progessBar.visibility = View.GONE
+                swipeRefreshLayout.isRefreshing=false
 
                 Toast.makeText(this@MyPickupResquestActivity, "RequestData:${requestData}", Toast.LENGTH_SHORT).show()
                 Log.d("DataFetchApi", "Request Data:${requestData}")
@@ -108,6 +126,7 @@ class MyPickupResquestActivity : AppCompatActivity() {
                 //  Not Show progress bar and text
                 progessBarTextView.visibility = View.GONE
                 progessBar.visibility = View.GONE
+                swipeRefreshLayout.isRefreshing=false
             }
         })
     }

@@ -77,6 +77,18 @@ class SelectPickupAddressActivity : AppCompatActivity() {
         recyclerView = binding.addressRecyclerview
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            val sharedPreference = getSharedPreferences("MyPrefs", MODE_PRIVATE)
+            val otpId = sharedPreference.getInt("otp_id", -1)
+
+            if (otpId != -1) {
+
+                fetchAddresses(otpId)
+            } else {
+                Toast.makeText(this, "Failed to retrieve OTP ID", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         binding.addressContainer.setOnClickListener {
             val intent = Intent(this, GoogleMapsActivity::class.java)
@@ -133,6 +145,7 @@ class SelectPickupAddressActivity : AppCompatActivity() {
 
                 binding.progressTextview.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
+                binding.swipeRefreshLayout.isRefreshing=false
             }
 
             override fun onFailure(call: Call<List<List<UserResponseSubListItem>>?>, t: Throwable) {
@@ -140,6 +153,7 @@ class SelectPickupAddressActivity : AppCompatActivity() {
 
                 binding.progressTextview.visibility = View.GONE
                 binding.progressBar.visibility = View.GONE
+                binding.swipeRefreshLayout.isRefreshing=false
             }
         })
 

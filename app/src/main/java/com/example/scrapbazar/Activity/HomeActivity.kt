@@ -23,6 +23,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.scrapbazar.Adapter.ProductAdapter
 import com.example.scrapbazar.Api.RetrofitInstance
 import com.example.scrapbazar.DataModel.ProductDataClass
@@ -49,6 +50,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var progessBar: ProgressBar
     private lateinit var progessBarTextView:TextView
     private lateinit var selectedProductNames: ArrayList<String>
+    private lateinit var swipeRefreshLayout:SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,7 @@ class HomeActivity : AppCompatActivity() {
 
         progessBar=findViewById(R.id.progressBar)
         progessBarTextView=findViewById(R.id.progressTextview)
+        swipeRefreshLayout=findViewById(R.id.swipeRefreshLayout)
 
 
         //searchView=findViewById(R.id.searchView)
@@ -106,6 +109,12 @@ class HomeActivity : AppCompatActivity() {
 
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = GridLayoutManager(this, 2)
+
+        swipeRefreshLayout.setOnRefreshListener {
+
+            getData()
+
+        }
 
         getData()
 
@@ -334,6 +343,7 @@ class HomeActivity : AppCompatActivity() {
                         //  Not Show progress bar and text
                         progessBarTextView.visibility = View.GONE
                         progessBar.visibility = View.GONE
+                        swipeRefreshLayout.isRefreshing=false
                     } else {
                         Toast.makeText(
                             this@HomeActivity,
@@ -351,6 +361,7 @@ class HomeActivity : AppCompatActivity() {
                     //  Not Show progress bar and text
                     progessBarTextView.visibility = View.GONE
                     progessBar.visibility = View.GONE
+                    swipeRefreshLayout.isRefreshing=false
                 }
             })
     }
